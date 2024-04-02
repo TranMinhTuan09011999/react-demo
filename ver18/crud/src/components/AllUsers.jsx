@@ -27,7 +27,7 @@ const AllUsers = () => {
     const classes = useStyle();
 
     const [user, setUser] = useState([]);
-    useEffect(() => {z``
+    useEffect(() => {
         getUsers();
     }, [])
 
