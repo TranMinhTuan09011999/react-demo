@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FaStar } from "react-icons/fa6";
+import { FaShare } from "react-icons/fa6";
 import Pagination from "../pagination/Pagination";
+import SearchField from "../search/SearchField";
 import API from "../../libs/api";
 import BookSearchParams from "../../model/book-search-params";
 import Book from "../../model/book";
@@ -8,8 +9,9 @@ import Book from "../../model/book";
 const Books = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(15);
+  const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [query, setQuery] = useState("subject:love");
 
   // For the pagination
   const [pageNumberLimit, setPageNumberLimit] = useState(5);
@@ -42,7 +44,7 @@ const Books = () => {
   useEffect(() => {
     const getBooks = async () => {
       const params: BookSearchParams = {
-        q: "subject:love",
+        q: query,
         page: page,
         limit: pageSize,
       };
@@ -51,10 +53,9 @@ const Books = () => {
       getTotalPages(response.numFound, pageSize);
     };
     getBooks();
-  }, [page, pageSize]);
+  }, [page, pageSize, query]);
 
   const getTotalPages = (itemSize: number, pageSize: number) => {
-    console.log(Math.ceil(itemSize / pageSize));
     setTotalPages(Math.ceil(itemSize / pageSize));
   };
 
@@ -62,15 +63,27 @@ const Books = () => {
     return "https://covers.openlibrary.org/b/id/" + cover_i + "-L.jpg";
   };
 
+  const getDataSearch = (value: string) => {
+    setQuery("title:" + value);
+  };
+
   return (
     <>
       <div className="mt-14 mb-12">
         <div className="container">
           {/* header */}
-          <div className="flex">
-            <div></div>
-            <div className="text-center mb-10 max-w-[600px] mx-auto">
+          <div className="flex flex-col md:flex-row">
+            <div className="md:flex-none md:w-[30%]"></div>
+            <div className="md:grow text-center md:mb-10 mb-5 max-w-[600px] mx-auto">
               <h1 className="text-3xl font-bold">Book List For You</h1>
+            </div>
+            <div className="md:flex-none md:w-[30%] mx-auto mb-5">
+              <div className="w-60 md:float-end">
+                <SearchField
+                  onEnter={getDataSearch}
+                  onSearchClick={getDataSearch}
+                />
+              </div>
             </div>
           </div>
           {/* Body section */}
@@ -93,7 +106,7 @@ const Books = () => {
                       {data.first_publish_year}
                     </p>
                     <div className="flex items-center gap-1">
-                      <FaStar className="text-yellow-500" />
+                      <FaShare className="text-yellow-500" />
                       <span>{}</span>
                     </div>
                   </div>

@@ -18,7 +18,7 @@ const PaginatedNumbers = ({
   return Array.from({ length: totalPages }, (num, index) => {
     if (index < maxPageNumberLimit + 1 && index > minPageNumberLimit)
       return (
-        <li>
+        <li key={index}>
           <a
             onClick={() => changePage(index)}
             className={`border border-gray-300 ${

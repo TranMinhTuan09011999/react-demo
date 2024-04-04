@@ -1,6 +1,7 @@
 import useLoaderContext from "@/context/UseLoaderContext";
 import { ReactNode, useEffect, useState } from "react";
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import API from "@/libs/api";
 
 type AxiosInterceptorProps = {
   children: ReactNode;
@@ -31,18 +32,18 @@ const AxiosInterceptor = ({ children }: AxiosInterceptorProps) => {
   };
 
   useEffect(() => {
-    const reqInterceptorEject = axios.interceptors.request.use(
+    const reqInterceptorEject = API.apiInstance.interceptors.request.use(
       reqInterceptor,
       reqErrInterceptor
     );
-    const resInterceptorEject = axios.interceptors.response.use(
+    const resInterceptorEject = API.apiInstance.interceptors.response.use(
       resInterceptor,
       resErrInterceptor
     );
     setIsLoaded(true);
     return () => {
-      axios.interceptors.request.eject(reqInterceptorEject);
-      axios.interceptors.response.eject(resInterceptorEject);
+      API.apiInstance.interceptors.request.eject(reqInterceptorEject);
+      API.apiInstance.interceptors.response.eject(resInterceptorEject);
     };
   }, []);
   return isLoaded ? children : null;
