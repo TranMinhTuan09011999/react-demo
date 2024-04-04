@@ -1,3 +1,5 @@
+import BookListResponse from "@/model/book-list-response";
+import BookSearchParams from "@/model/book-search-params";
 import axios, { AxiosResponse } from "axios";
 
 const API = {
@@ -16,10 +18,18 @@ const API = {
     APP: {
       LOGIN: "/example/login",
     },
+    BOOK: {
+      GET_ALL_BOOK: "https://openlibrary.org/search.json",
+    },
   },
   app: {
     login: (): Promise<AxiosResponse<void>> => {
       return API.apiInstance.post(API.API_PATH.APP.LOGIN);
+    },
+    getAllBooks: async (
+      params: BookSearchParams
+    ): Promise<AxiosResponse<BookListResponse>> => {
+      return await axios.get(API.API_PATH.BOOK.GET_ALL_BOOK, { params });
     },
   },
 };
