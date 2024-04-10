@@ -1,6 +1,6 @@
 import React from "react";
-import Hero from "../hero/Hero";
-import Books from "../bookSlider/Books";
+import Hero from "../../components/Hero/Hero";
+import Books from "../../components/BookSlider/Books";
 
 const Home = () => {
   return (

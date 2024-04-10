@@ -1,5 +1,5 @@
-import BookListResponse from "@/model/book-list-response";
-import BookSearchParams from "@/model/book-search-params";
+import BookListResponse from "@/types/api/book-list-response";
+import BookSearchParams from "@/types/api/book-search-params";
 import axios, { AxiosResponse } from "axios";
 
 const API = {
@@ -7,7 +7,7 @@ const API = {
     baseURL: import.meta.env.VITE_API,
     // withCredentials: true,
     headers: {
-      // "Content-Type": "application/json",
+      "Content-Type": "application/json",
       // ...(import.meta.env.VITE_ENV === "development" && {
       //   "Access-Control-Allow-Origin": "*",
       // }),
@@ -28,7 +28,7 @@ const API = {
     },
     getAllBooks: async (
       params: BookSearchParams
-    ): Promise<AxiosResponse<BookListResponse>> => {
+    ): Promise<BookListResponse> => {
       return await API.apiInstance.get(API.API_PATH.BOOK.GET_ALL_BOOK, {
         params,
       });

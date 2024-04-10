@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import i18n from "./i18n/i18n";
 import LayoutWrapper from "./layouts/LayoutWrapper";
-import Navbar from "./views/navbar/Navbar";
-import Footer from "./views/footer/Footer";
+import Navbar from "./components/Navbar/Navbar";
+import Footer from "./components/Footer/Footer";
 import { LoaderContextProvider } from "./context/LoaderContext";
 import AxiosInterceptor from "./interceptor/AxiosInterceptor";
-import Loader from "./views/loader/Loader";
+import Loader from "./components/Loader/Loader";
 
 const App = () => {
   const [antdLocale, setAntdLocale] = useState(enUS);

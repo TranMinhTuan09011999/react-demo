@@ -1,14 +1,31 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { FaShare } from "react-icons/fa6";
-import Pagination from "../pagination/Pagination";
-import SearchField from "../search/SearchField";
-import API from "../../libs/api";
-import BookSearchParams from "../../model/book-search-params";
-import Book from "../../model/book";
+import Pagination from "../Pagination/Pagination";
+import SearchField from "../Search/SearchField";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "@/redux/store";
+import type { RootState } from "@/redux/store";
+import { getAllBooks } from "@/redux/slices/bookSlice";
+import BookSearchParams from "@/types/api/book-search-params";
+import { BookEntities } from "@/types/api/bookEntities";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Books = () => {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [page, setPage] = useState(1);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const page = queryParams.get("pages");
+
+  const dispatch = useAppDispatch();
+  const bookResponse: BookEntities = useSelector(
+    (state: RootState) => state.book
+  );
+
+  // const [books, setBooks] = useState<Book[]>([]);
+  const [currentPage, setCurrentPage] = useState(
+    page == null ? 1 : parseInt(page, 10)
+  );
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [query, setQuery] = useState("subject:love");
@@ -19,24 +36,24 @@ const Books = () => {
   const [maxPageNumberLimit, setMaxPageNumberLimit] = useState(5);
 
   const changePage = (pageNumber: number) => {
-    setPage(pageNumber);
+    setCurrentPage(pageNumber);
   };
 
   const incrementPage = () => {
-    setPage(page + 1);
-    if (page + 1 > maxPageNumberLimit) {
+    setCurrentPage(currentPage + 1);
+    if (currentPage + 1 > maxPageNumberLimit) {
       setMaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
       setMinPageNumberLimit(minPageNumberLimit + pageNumberLimit);
     }
   };
 
   const decrementPage = () => {
-    setPage(page - 1);
-    if ((page - 1) % pageNumberLimit === 0) {
+    setCurrentPage(currentPage - 1);
+    if ((currentPage - 1) % pageNumberLimit === 0) {
       setMaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
       setMinPageNumberLimit(minPageNumberLimit - pageNumberLimit);
     }
-    if (page - 1 === 0) {
+    if (currentPage - 1 === 0) {
       return null;
     }
   };
@@ -45,15 +62,22 @@ const Books = () => {
     const getBooks = async () => {
       const params: BookSearchParams = {
         q: query,
-        page: page,
+        page: currentPage,
         limit: pageSize,
       };
-      const response = await API.app.getAllBooks(params);
-      setBooks([...response.docs]);
-      getTotalPages(response.numFound, pageSize);
+      await dispatch(getAllBooks(params));
     };
     getBooks();
-  }, [page, pageSize, query]);
+    getTotalPages(bookResponse.data?.numFound, pageSize);
+    navigate(`/book?page=${currentPage}`);
+  }, [
+    bookResponse.data?.numFound,
+    dispatch,
+    navigate,
+    currentPage,
+    pageSize,
+    query,
+  ]);
 
   const getTotalPages = (itemSize: number, pageSize: number) => {
     setTotalPages(Math.ceil(itemSize / pageSize));
@@ -90,7 +114,7 @@ const Books = () => {
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 place-items-center gap-5">
               {/* Card */}
-              {books.map((data) => (
+              {bookResponse.data?.docs.map((data) => (
                 <div key={data.key} className="div space-y-3">
                   <img
                     src={formatImageUrl(data.cover_i)}
@@ -115,7 +139,7 @@ const Books = () => {
             </div>
             <Pagination
               totalPages={totalPages}
-              page={page}
+              page={currentPage}
               changePage={changePage}
               incrementPage={incrementPage}
               decrementPage={decrementPage}
