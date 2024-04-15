@@ -9,7 +9,7 @@ import type { RootState } from "@/redux/store";
 import { getAllBooks } from "@/redux/slices/bookSlice";
 import BookSearchParams from "@/types/api/book-search-params";
 import { BookEntities } from "@/types/api/bookEntities";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 
 const Books = () => {
   const navigate = useNavigate();
